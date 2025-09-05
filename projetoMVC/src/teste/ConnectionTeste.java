@@ -1,18 +1,22 @@
+package teste;
 import java.sql.Connection;
-import java.sql.SQLException;
 
-import java.sql.Connection;
+import util.ConnectionFactory;
 
 public class ConnectionTeste {
-    public static void main(String[] args)
+    public static void main(String[] args) throws Exception{
 
     Connection connection = ConnectionFactory.getConnection();
 
-    if(connection != null) {
+    if(connection !=null)
+
+    {
         System.out.println("A conxão foi estabelecida");
-    } else {
+    } else
+
+    {
         System.out.println("Algum problema");
     }
 connection.close();
-
+}
 }
