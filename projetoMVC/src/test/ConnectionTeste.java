@@ -1,4 +1,4 @@
-package teste;
+package test;
 import java.sql.Connection;
 
 import util.ConnectionFactory;

@@ -1,5 +1,7 @@
 package DAO;
 
+import model.Produto;
+
 import java.util.List;
 
     public interface GenericDAO {
@@ -12,5 +14,7 @@ import java.util.List;
         public boolean update(Object object);
 
         public void delete(int id);
+
+        boolean insert(Object object);
     }
-}
+

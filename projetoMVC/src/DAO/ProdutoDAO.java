@@ -2,10 +2,11 @@ package DAO;
 
 import model.Produto;
 import util.ConnectionFactory;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProdutoDAO implements GenericDAO {
@@ -22,7 +23,38 @@ public class ProdutoDAO implements GenericDAO {
 
     @Override
     public List<Object> getAll() {
-        return List.of();
+
+        List<Object> produtoList = new ArrayList<>();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT * FROM produto ORDER BY id";
+
+        try {
+            stmt = this.conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+            while (rs.next());
+            //Declaro um objeto da classe Produto pra ser populado com as informaçôes do banco
+            Produto produto = new Produto();
+
+            //Fazemos um match entre o nome da coluna no banco de dados com o nome do
+            //atributo correspondente do objeto
+            produto.setId(rs.getInt("id"));
+            produto.setDescricao(rs.getString("descricao"));
+            produto.setPreco(rs.getDouble("preco"));
+            produto.setStatus(rs.getBoolean("status"));
+
+            //Inserir objeto na lista
+            produtoList.add(produto);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            try {
+                ConnectionFactory.closeConnection(conn, stmt, rs);
+            } catch (Exception e){ e.printStackTrace();
+        }
+    }
+    return produtoList;
     }
 
     @Override
@@ -48,7 +80,7 @@ public class ProdutoDAO implements GenericDAO {
 
             stmt.setString(1, produto.getDescricao());
             stmt.setDouble(2, produto.getPreco());
-            stmt.setBoolean(3,produto.isStatus());
+            stmt.setBoolean(3, produto.isStatus());
 
         } catch (SQLException e) {
             System.out.println("Problemas ao inserir produto. Erro: " + e.getMessage());
@@ -59,8 +91,10 @@ public class ProdutoDAO implements GenericDAO {
                 ConnectionFactory.closeConnection(conn, stmt);
             } catch (Exception ex) {
 
-        }
+            }
 
+        }
+        return null;
     }
 
     @Override
@@ -71,5 +105,10 @@ public class ProdutoDAO implements GenericDAO {
     @Override
     public void delete(int id) {
 
+    }
+
+    @Override
+    public boolean insert(Object object) {
+        return false;
     }
 }
