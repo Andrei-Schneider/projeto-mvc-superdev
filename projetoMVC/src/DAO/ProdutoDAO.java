@@ -2,6 +2,7 @@ package DAO;
 
 import model.Produto;
 import util.ConnectionFactory;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,8 +17,8 @@ public class ProdutoDAO implements GenericDAO {
     public ProdutoDAO () throws Exception {
         try {
             this.conn = ConnectionFactory.getConnection();
-        } catch (Exception ex) {
-            throw new Exception(ex.getMessage());
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -32,56 +33,96 @@ public class ProdutoDAO implements GenericDAO {
         try {
             stmt = this.conn.prepareStatement(sql);
             rs = stmt.executeQuery();
-            while (rs.next());
-            //Declaro um objeto da classe Produto pra ser populado com as informaçôes do banco
-            Produto produto = new Produto();
 
-            //Fazemos um match entre o nome da coluna no banco de dados com o nome do
-            //atributo correspondente do objeto
-            produto.setId(rs.getInt("id"));
-            produto.setDescricao(rs.getString("descricao"));
-            produto.setPreco(rs.getDouble("preco"));
-            produto.setStatus(rs.getBoolean("status"));
+            // rs.next() vai buscar o próximo registro encontrado no SELECT anterior
+            // para CADA registro encontrado, será executado o bloco abaixo
+            while (rs.next()) {
+                // Declaro um objeto da classe Produto pra ser populado com as informações do bancc
+                Produto produto = new Produto();
 
-            //Inserir objeto na lista
-            produtoList.add(produto);
+                // Fazemos um match entre o nome da coluna no banco de dados com o nome do atributo
+                // correspondente do objeto
+                produto.setId(rs.getInt("id"));
+                produto.setDescricao(rs.getString("descricao"));
+                produto.setPreco(rs.getDouble("preco"));
+                produto.setStatus(rs.getBoolean("status"));
+
+                // Inserir este objeto produto na lista
+                produtoList.add(produto);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             try {
                 ConnectionFactory.closeConnection(conn, stmt, rs);
-            } catch (Exception e){ e.printStackTrace();
+            } catch (Exception ex) {
+                System.out.println("Problemas ao fechar conexão. Erro: " + ex.getMessage());
+                ex.printStackTrace();
+            }
         }
-    }
-    return produtoList;
+        return produtoList;
     }
 
     @Override
     public Object getById(int id) {
-        return null;
+        Produto produtoEncontrado = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT * FROM produto WHERE id = ?";
+        try {
+            stmt = this.conn.prepareStatement(sql);
+            stmt.setInt(1, id);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                produtoEncontrado = new Produto();
+
+                produtoEncontrado.setId(rs.getInt("id"));
+                produtoEncontrado.setDescricao(rs.getString("descricao"));
+                produtoEncontrado.setPreco(rs.getDouble("preco"));
+                produtoEncontrado.setStatus(rs.getBoolean("status"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                ConnectionFactory.closeConnection(conn, stmt, rs);
+            } catch (Exception ex) {
+                System.out.println("Problemas ao fechar conexão. Erro: " + ex.getMessage());
+                ex.printStackTrace();
+            }
+        }
+
+        return produtoEncontrado;
     }
 
     @Override
-    public Boolean add(Object object) {
+    public Boolean insert(Object object) {
 
-        //Convertendo o objeto generico
+        // Convertendo o objeto genérico em um objeto do tipo específico
         Produto produto = (Produto) object;
 
-        //Instanciando um objeto da classe que formata o comando sql
+        // Instanciando um objeto da classe que "formata" o comando sql
         PreparedStatement stmt = null;
 
-        //Escrevendo sql para inserir um novo registro na tabela 'produto'
-        String sql = "INSERT INTO produto (descricao, preco, status) VALUES (?, ?, ?)";
+        // Escrevendo a sql para inserir um novo registro na tabela 'produto'
+        String sql = "INSERT INTO produto (descricao, preco, status) VALUES (?,?,?)";
 
         try {
-            //Transforma a String sql em um cmando válido para ser executado no banco
-            stmt = conn.prepareStatement(sql);
+            // Transforma a String sql em um comando válido para ser executado no banco
+            stmt = this.conn.prepareStatement(sql);
 
+            // Inserindo valor em cada ponto de interrogação de forma sequencial
+            // onde cada ? refere-se à uma coluna da tabela 'produto'
+            // atentando para o tipo de cada coluna com o tipo do valor a ser enviado
             stmt.setString(1, produto.getDescricao());
             stmt.setDouble(2, produto.getPreco());
             stmt.setBoolean(3, produto.isStatus());
 
+            // executa a sql no banco
+            stmt.execute();
+            return true;
         } catch (SQLException e) {
             System.out.println("Problemas ao inserir produto. Erro: " + e.getMessage());
             e.printStackTrace();
@@ -90,25 +131,19 @@ public class ProdutoDAO implements GenericDAO {
             try {
                 ConnectionFactory.closeConnection(conn, stmt);
             } catch (Exception ex) {
-
+                System.out.println("Problemas ao fechar conexão. Erro: " + ex.getMessage());
+                ex.printStackTrace();
             }
-
         }
-        return null;
     }
 
     @Override
-    public boolean update(Object object) {
-        return false;
+    public Boolean update(Object object) {
+        return null;
     }
 
     @Override
     public void delete(int id) {
 
-    }
-
-    @Override
-    public boolean insert(Object object) {
-        return false;
     }
 }

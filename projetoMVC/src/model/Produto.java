@@ -4,13 +4,13 @@ public class Produto {
 
     private int id;
     private String descricao;
-    private double preco;
+    private Double preco;
     private boolean status;
 
     public Produto() {
     }
 
-    public Produto(int id, String descricao, double preco, boolean status) {
+    public Produto(int id, String descricao, Double preco, boolean status) {
         this.id = id;
         this.descricao = descricao;
         this.preco = preco;
@@ -33,11 +33,11 @@ public class Produto {
         this.descricao = descricao;
     }
 
-    public double getPreco() {
+    public Double getPreco() {
         return preco;
     }
 
-    public void setPreco(double preco) {
+    public void setPreco(Double preco) {
         this.preco = preco;
     }
 
@@ -48,5 +48,4 @@ public class Produto {
     public void setStatus(boolean status) {
         this.status = status;
     }
-
 }

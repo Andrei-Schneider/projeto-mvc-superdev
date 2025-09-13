@@ -1,4 +1,3 @@
-
 import controller.ProdutoController;
 import model.Produto;
 
@@ -8,14 +7,15 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws Exception {
 
-
         ProdutoController controller = new ProdutoController();
 
         StringBuilder menu = new StringBuilder();
         menu.append("*** Menu do Sistema ***");
-        menu.append("\n [1] Cadastrar");
-        menu.append("\n [2] Listar");
-        menu.append("\n [0] Sair");
+        menu.append("\n[1] Cadastrar");
+        menu.append("\n[2] Listar todos");
+        menu.append("\n[3] Buscar por ID");
+        menu.append("\n[4] Buscar Descrição");
+        menu.append("\n[0] Sair");
         menu.append("\n\nSelecione uma opção");
 
         int opcao = -1;
@@ -25,9 +25,8 @@ public class Main {
 
             switch (opcao) {
                 case 1:
-                    //cadastrar
-                    String descricao = JOptionPane.showInputDialog("Descriçãon do Produto");
-                    Double preco = Double.parseDouble((JOptionPane.showInputDialog("Preço do produto")));
+                    String descricao = JOptionPane.showInputDialog("Descrição do produto");
+                    Double preco = Double.parseDouble(JOptionPane.showInputDialog("Preço do produto"));
 
                     Produto novoProduto = new Produto();
                     novoProduto.setDescricao(descricao);
@@ -38,22 +37,30 @@ public class Main {
                     JOptionPane.showMessageDialog(null, mensagemInsert);
                     break;
                 case 2:
-                    //Listar
-                    List<Produto> produtoList = controller.getAll();
-
-                    StringBuilder listImprimir = new StringBuilder();
-
-                    for (Produto produto : produtoList) {
-                        listImprimir.append(produto.getId());
-                        listImprimir.append("  -  ");
-                        listImprimir.append(produto.getDescricao());
-                        listImprimir.append("  -  ");
-                        listImprimir.append(produto.getPreco());
-                        listImprimir.append("\n");
-                    }
+                    JOptionPane.showMessageDialog(null, controller.getFormatedList());
                     break;
                 case 3:
-
+                    int idBuscar = Integer.parseInt(JOptionPane.showInputDialog("Digite o ID para buscar o produto"));
+                    Produto produtoEncontrado = controller.getById(idBuscar);
+                    if (produtoEncontrado != null) {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "*** Produto Encontrado! ***\n" +
+                                        "\nNome: " + produtoEncontrado.getDescricao() +
+                                        "\nCódigo: " + produtoEncontrado.getId() +
+                                        "\nPreço: R$" + produtoEncontrado.getPreco());
+                    } else {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Nenhum produto econtrado com o código " + idBuscar
+                        );
+                    }
+                    break;
+                case 0:
+                    JOptionPane.showMessageDialog(null, "Saindo do sistema ...");
+                    break;
+                default:
+                    JOptionPane.showMessageDialog(null, "Opção inválida!");
             }
         }
 
