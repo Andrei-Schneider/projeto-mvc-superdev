@@ -2,6 +2,7 @@ import controller.ProdutoController;
 import model.Produto;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -15,8 +16,14 @@ public class Main {
         menu.append("\n[2] Listar todos");
         menu.append("\n[3] Buscar por ID");
         menu.append("\n[4] Buscar Descrição");
+        menu.append("\n[5] Excluir");
         menu.append("\n[0] Sair");
         menu.append("\n\nSelecione uma opção");
+
+        // IMPLEMENTAR
+        // Opção 4 - Buscar pela descrição
+        // Opção 5 - Melhorar a exclusão
+        // Opção 6 - Alterar
 
         int opcao = -1;
 
@@ -37,7 +44,8 @@ public class Main {
                     JOptionPane.showMessageDialog(null, mensagemInsert);
                     break;
                 case 2:
-                    JOptionPane.showMessageDialog(null, controller.getFormatedList());
+                    List<Produto> listaTodosProdutos = controller.getAll();
+                    controller.printFormatedList(listaTodosProdutos);
                     break;
                 case 3:
                     int idBuscar = Integer.parseInt(JOptionPane.showInputDialog("Digite o ID para buscar o produto"));
@@ -56,9 +64,33 @@ public class Main {
                         );
                     }
                     break;
+
+                case 4:
+                    String descricaoBusca = JOptionPane.showInputDialog("Digite a descrição para buscar o produto");
+                    List<Produto> produtosFiltradosPorDesc = controller.getByDescricao(descricaoBusca);
+                    controller.printFormatedList(produtosFiltradosPorDesc);
+                    break;
+
+                case 5:
+                    // Validar primeiro se existe o produto para o código informado pelo usuário, e somente seguir com o
+                    // processo de deletar se o produto existir
+                    int idDelete = Integer.parseInt(JOptionPane.showInputDialog("Digite o código do produto para excluir"));
+                    Produto produtoDelete = controller.getById(idDelete);
+                    if (produtoDelete == null) {
+                        JOptionPane.showMessageDialog(
+                                null, "Produto não enontrado" + idDelete);
+                    } else {
+                    controller.delete(idDelete);
+                    JOptionPane.showMessageDialog(null, "*** Produto excluído com sucesso! ***\n\n" +
+                            produtoDelete.getDescricao());
+
+                    }
+                    break;
+
                 case 0:
                     JOptionPane.showMessageDialog(null, "Saindo do sistema ...");
                     break;
+
                 default:
                     JOptionPane.showMessageDialog(null, "Opção inválida!");
             }

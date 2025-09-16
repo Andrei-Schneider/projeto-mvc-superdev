@@ -97,6 +97,39 @@ public class ProdutoDAO implements GenericDAO {
         return produtoEncontrado;
     }
 
+    public  List<Produto> getByDescricao(String descricao){
+        List<Produto> produtoList = new ArrayList<>();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT * FROM produto WHERE descricao ILIKE(?)";
+        try {
+            stmt = this.conn.prepareStatement(sql);
+            stmt.setString(1,"%" + descricao + "%");
+            rs = stmt.executeQuery();
+            while (rs.next()){
+                Produto produto = new Produto();
+                produto.setId(rs.getInt("id"));
+                produto.setDescricao(rs.getString("descricao"));
+                produto.setPreco(rs.getDouble("preco"));
+                produto.setStatus((rs.getBoolean("status")));
+                produtoList.add(produto);
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            try {
+                ConnectionFactory.closeConnection(conn, stmt, rs);
+            } catch (Exception ex) {
+                System.out.println("Problemas ao fechar conexão. Erro: " + ex.getMessage());
+                ex.printStackTrace();
+            }
+        }
+
+        return produtoList;
+    }
+
+
+
     @Override
     public Boolean insert(Object object) {
 
@@ -144,6 +177,21 @@ public class ProdutoDAO implements GenericDAO {
 
     @Override
     public void delete(int id) {
-
+        PreparedStatement stmt = null;
+        String sql = "DELETE FROM produto WHERE id = ?";
+        try {
+            stmt = this.conn.prepareStatement(sql);
+            stmt.setInt(1, id);
+            stmt.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                ConnectionFactory.closeConnection(conn, stmt);
+            } catch (Exception ex) {
+                System.out.println("Problemas ao fechar conexão. Erro: " + ex.getMessage());
+                ex.printStackTrace();
+            }
+        }
     }
 }

@@ -1,20 +1,17 @@
 package DAO;
 
-import model.Produto;
-
 import java.util.List;
 
-    public interface GenericDAO {
-        public List<Object> getAll();
+public interface GenericDAO {
 
-        public Object getById(int id);
+    public List<Object> getAll();
 
-        public Boolean add(Object object);
+    public Object getById(int id);
 
-        public boolean update(Object object);
+    public Boolean insert(Object object);
 
-        public void delete(int id);
+    public Boolean update(Object object);
 
-        boolean insert(Object object);
-    }
+    public void delete(int id);
 
+}

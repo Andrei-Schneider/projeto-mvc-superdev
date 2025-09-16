@@ -1,3 +1,4 @@
+
 package util;
 
 import java.sql.Connection;
@@ -7,9 +8,9 @@ import java.sql.ResultSet;
 
 public class ConnectionFactory {
 
-    public static final String PATH = "jdbc:postgresql://localhost:5432//turmajava";
-    public static String USER = "postgres";
-    public static String PASSWORD = "postgres";
+    public static final String PATH = "jdbc:postgresql://localhost:5432/turmajava";
+    public static final String USER = "postgres";
+    public static final String PASSWORD = "admin";
 
     public static Connection getConnection() {
         try {
@@ -18,9 +19,7 @@ public class ConnectionFactory {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-            //throw new Exception(e.getMessage());
         }
-
     }
 
     public static void closeConnection(Connection conn, Statement stmt, ResultSet rs) throws Exception {
@@ -40,10 +39,10 @@ public class ConnectionFactory {
             if (rs != null) {
                 rs.close();
             }
-            if (rs != null) {
+            if (stmt != null) {
                 stmt.close();
             }
-            if (rs != null) {
+            if (conn != null) {
                 conn.close();
             }
         } catch (Exception e) {
